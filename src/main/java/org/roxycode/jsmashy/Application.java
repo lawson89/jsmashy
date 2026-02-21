@@ -1,10 +1,9 @@
 package org.roxycode.jsmashy;
 
-import io.micronaut.runtime.Micronaut;
+import io.micronaut.configuration.picocli.PicocliRunner;
 
 public class Application {
-
     public static void main(String[] args) {
-        Micronaut.run(Application.class, args);
+        PicocliRunner.run(JSmashyCommand.class, args);
     }
 }

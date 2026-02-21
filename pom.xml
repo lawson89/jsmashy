@@ -20,7 +20,7 @@
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>org.roxycode.jsmashy.aot.generated</micronaut.aot.packageName>
     <micronaut.runtime>netty</micronaut.runtime>
-    <exec.mainClass>org.roxycode.jsmashy.Application</exec.mainClass>
+    <exec.mainClass>org.roxycode.jsmashy.JSmashyCommand</exec.mainClass>
   </properties>
 
   <repositories>
@@ -66,6 +66,22 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
+      <dependency>
+      <groupId>io.micronaut.picocli</groupId>
+      <artifactId>micronaut-picocli</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.13.2</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -110,6 +126,28 @@
             <arg>-Amicronaut.processing.module=jsmashy</arg>
           </compilerArgs>
         </configuration>
+      </plugin>
+          <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.13.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>antlr4</goal>
+            </goals>
+            <configuration>
+              <visitor>true</visitor>
+              <listener>true</listener>
+              <sourceDirectory>${basedir}/src/main/antlr4</sourceDirectory>
+              <outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
+              <arguments>
+                <argument>-package</argument>
+                <argument>org.roxycode.jsmashy.generated</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
