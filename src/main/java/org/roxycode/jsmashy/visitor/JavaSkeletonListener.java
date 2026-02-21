@@ -16,7 +16,8 @@ public class JavaSkeletonListener extends Java20BaseListener {
     }
 
     private void stripComments() {
-        TokenStream tokens = rewriter.getTokenStream();
+        org.antlr.v4.runtime.BufferedTokenStream tokens = (org.antlr.v4.runtime.BufferedTokenStream) rewriter.getTokenStream();
+        tokens.fill();
         for (int i = 0; i < tokens.size(); i++) {
             Token t = tokens.get(i);
             if (t.getType() == Java20Lexer.COMMENT || t.getType() == Java20Lexer.LINE_COMMENT) {

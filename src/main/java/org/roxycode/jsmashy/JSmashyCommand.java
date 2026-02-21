@@ -36,7 +36,7 @@ public class JSmashyCommand implements Runnable {
 
     @Override
     public void run() {
-        List<String> excludes = new ArrayList<>(List.of(".git", "target", "node_modules", ".idea", ".vscode"));
+        List<String> excludes = new ArrayList<>(List.of("target", "node_modules", ".idea", ".vscode", ".git"));
         if (userExcludes != null) {
             excludes.addAll(userExcludes);
         }
