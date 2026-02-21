@@ -1,13 +1,13 @@
 package org.roxycode.jsmashy.visitor;
 
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.TokenStreamRewriter;
+import org.roxycode.jsmashy.generated.Java20BaseListener;
 import org.roxycode.jsmashy.generated.Java20Lexer;
 import org.roxycode.jsmashy.generated.Java20Parser;
-import org.roxycode.jsmashy.generated.Java20BaseListener;
 
 public class JavaSkeletonListener extends Java20BaseListener {
+
     private final TokenStreamRewriter rewriter;
 
     public JavaSkeletonListener(TokenStreamRewriter rewriter) {

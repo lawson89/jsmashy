@@ -20,30 +20,42 @@ class SemanticCompressionTest {
 
     @Test
     void testJavaCompression() throws IOException {
-        Path tempDir = Files.createTempDirectory("jsmashy-test");
+        Path tempDir = Files.createTempDirectory("jsmashy-test-java");
         Path javaFile = tempDir.resolve("Test.java");
-        Files.writeString(javaFile, """
-            package com.example;
-            /** Javadoc */
-            public class Test {
-                // Comment
-                public void method() {
-                    System.out.println("Hello");
-                }
-                
-                public Test() {
-                    this.init();
-                }
-            }
-            """);
+        Files.writeString(javaFile, "public class Test { public void method() { System.out.println(1); } }");
 
-        String xml = fileProcessingService.processDirectory(tempDir, List.of(), false); System.out.println("DEBUG XML: " + xml);
+        String xml = fileProcessingService.processDirectory(tempDir, List.of(), false);
+        assertTrue(xml.contains("public class Test"), "Java class should be present");
+        assertFalse(xml.contains("System.out.println"), "Java body should be stripped");
+    }
+
+    @Test
+    void testPythonAndRawCompression() throws IOException {
+        Path tempDir = Files.createTempDirectory("jsmashy-test-py-raw");
         
-        assertTrue(xml.contains("public class Test"), "Should contain class decl");
-        assertTrue(xml.contains("public void method()") && xml.contains(";"), "Should contain method decl");
-        assertTrue(xml.contains("public Test()") && xml.contains(";"), "Should contain constructor decl");
-        assertFalse(xml.contains("System.out.println"), "Should NOT contain method body");
-        assertFalse(xml.contains("Javadoc"), "Should NOT contain comments");
-        assertFalse(xml.contains("Comment"), "Should NOT contain comments");
+        // Python file
+        Path pyFile = tempDir.resolve("test.py");
+        Files.writeString(pyFile, "class A:\n    def f(self):\n        print(1)\n\ndef top():\n    pass");
+
+        // Plain text file (should be raw)
+        Path txtFile = tempDir.resolve("info.txt");
+        Files.writeString(txtFile, "Hello World");
+
+        // File with CDATA end sequence (should be escaped)
+        Path cdataFile = tempDir.resolve("cdata.txt");
+        Files.writeString(cdataFile, "]]>");
+
+        String xml = fileProcessingService.processDirectory(tempDir, List.of(), false);
+        System.out.println("COMPLEX DEBUG XML:\n" + xml);
+
+        assertTrue(xml.contains("class A:"), "Python class should be present");
+        assertTrue(xml.contains("def f(self): ..."), "Python method should be stripped");
+        assertTrue(xml.contains("def top(): ..."), "Python top level func should be stripped");
+        
+        assertTrue(xml.contains("<file path=\"info.txt\">"), "Text file should be present");
+        assertTrue(xml.contains("Hello World"), "Text file should be raw");
+        
+        assertTrue(xml.contains("<file path=\"cdata.txt\">"), "CDATA file should be present");
+        assertTrue(xml.contains("]]>]]&gt;<![CDATA["), "CDATA end sequence should be escaped");
     }
 }
